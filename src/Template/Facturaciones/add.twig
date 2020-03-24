@@ -1,0 +1,110 @@
+<b-row id="app" v-cloak>
+    <b-col sm="12">
+        <section class="card">
+            <header class="card-header">
+                <div class="card-actions">
+                    <a href="#" class="card-action card-action-toggle" data-card-toggle></a>
+                </div>
+                <h2 class="card-title">Nueva Facturación</h2>
+            </header>
+            <div class="card-body">
+                <form-facturacion
+                    ref="form-facturacion"
+                    :facturacion="facturacion"
+                    :proyectos="proyectos"
+                    :tipo-facturaciones="tipoFacturaciones"
+                ></form-facturacion>
+            </div>
+            <footer class="card-footer text-right">
+                <b-button variant="outline-success" @click="nuevaFacturacion" :disabled="invalid || formWait">
+                    Guardar
+                </b-button>
+                <b-button variant="outline-danger" @click="clearForm">Cancelar</b-button>
+            </footer>
+        </section>
+    </b-col>
+
+    <b-col sm="12">
+        <section class="card">
+            <header class="card-header">
+                <div class="card-actions">
+                    <a href="#" class="card-action card-action-toggle" data-card-toggle></a>
+                </div>
+                <h2 class="card-title">Listado de Facturaciones</h2>
+            </header>
+            <div class="card-body">
+                <b-row>
+                    <listado-facturacion
+                        :facturaciones="facturaciones"
+                        @editar="showModalEditar"
+                        @eliminar="deleteFacturacion"
+                        @ver-archivos="showModalArchivos"
+                        @cambiar-estatus="showModalEstatus"
+                    ></listado-facturacion>
+                </b-row>
+            </div>
+        </section>
+    </b-col>
+
+    {# editar facturación #}
+    <b-modal ref="modalEditarFacturacion" scrollable size="lg" title="Editar Facturación" @hidden="setFacturacion([])">
+        <form-facturacion
+            ref="form-facturacion-editar"
+            :facturacion="facturacion"
+            :proyectos="proyectos"
+            :tipo-facturaciones="tipoFacturaciones"
+            @close-modal="closeModal"
+        ></form-facturacion>
+        <template v-slot:modal-footer="{ ok, cancel, hide }">
+            <b-button variant="outline-success" :disabled="formWait" @click="editarFacturacion">Guardar</b-button>
+        </template>
+    </b-modal>
+
+    {# ver archivos #}
+    <b-modal ref="modalVerArchivos" scrollable title="Ver Archivos" :hide-footer="true" @hidden="setFacturacion([])">
+        <b-table hover bordered :fields="[{key: 'nombre_archivo', label: 'Archivo'}]" :items="facturacion.multimedia">
+            <template v-slot:cell(nombre_archivo)="data">
+                <a :href="data.item.url + '?versionId=' + data.item.version_id" target="_blank">${ data.item.nombre_archivo }</a>
+            </template>
+        </b-table>
+    </b-modal>
+
+    {# modal estatus #}
+    <b-modal ref="modalEditarEstatus" title="Cambiar Estatus">
+        <validation-observer v-slot="{ invalid, valid }" ref="form-estatus" tag="form" class="form-horizontal form-bordered">
+            {# estatus #}
+            <validation-provider
+                tag="div"
+                class="form-group row"
+                v-slot="{ errors, classes }"
+                rules="required"
+                name="Estatus"
+            >
+                <label class="col-sm-4 control-label text-sm-right pt-2">
+                    Estatus <span class="required">*</span>
+                </label>
+                <b-col sm="8">
+                    <v-select
+                        placeholder="Selecciona..."
+                        v-model="facturacion.estatus"
+                        label="nombre"
+                        :options="estatus"
+                        :clearable="false"
+                        :select-on-tab="true"
+                    >
+                        <template slot="no-options">No se han encontrado opciones.</template>
+                    </v-select>
+                    <div class="invalid-feedback">${ errors[0] }</div>
+                </b-col>
+            </validation-provider>
+        </validation-observer>
+        <template v-slot:modal-footer="{ ok, cancel, hide }">
+            <b-button variant="outline-success" :disabled="formWait" @click="cambiarEstatus(facturacion)">Guardar</b-button>
+        </template>
+    </b-modal>
+</b-row>
+
+{{ _view.start('script') }}
+    {# { Html.script('/webpack/dev/facturaciones.bundle.js')|raw } #}
+    {{ Html.script('facturaciones.bundle.15e032980443c4c658bf')|raw }}
+{{ _view.end() }}

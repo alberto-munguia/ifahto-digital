@@ -1,0 +1,136 @@
+<b-row id="app" v-cloak>
+    <b-col sm="12">
+        <section class="card">
+            <header class="card-header">
+                <div class="card-actions">
+                    <a href="#" class="card-action card-action-toggle" data-card-toggle></a>
+                </div>
+                <h2 class="card-title">Nueva Licencia</h2>
+            </header>
+            <div class="card-body">
+                <form-licencia
+                    ref="form-licencia"
+                    :licencia="licencia"
+                    :proveedores="proveedores"
+                    :tipo-pagos="tipoPagos"
+                    :usuarios="usuarios"
+                    :is-modal="false"
+                    @add-proveedor="showModal('modalAddProveedor')"
+                ></form-licencia>
+            </div>
+            <footer class="card-footer text-right">
+                <b-button variant="outline-success" @click="nuevaLicencia" :disabled="invalid || formWait">
+                    Guardar
+                </b-button>
+                <b-button variant="outline-danger" @click="clearForm">Cancelar</b-button>
+            </footer>
+        </section>
+    </b-col>
+
+    <b-col sm="12">
+        <section class="card">
+            <header class="card-header">
+                <div class="card-actions">
+                    <a href="#" class="card-action card-action-toggle" data-card-toggle></a>
+                </div>
+                <h2 class="card-title">Listado de Licencias</h2>
+            </header>
+            <div class="card-body">
+                <b-row>
+                    <listado-licencia
+                        :licencias="licencias"
+                        @editar="showModalEditar"
+                        @eliminar="deleteLicencia"
+                        @ver-archivos="showModalArchivos"
+                        @asociar-proyectos="showModalAsociar"
+                    ></listado-licencia>
+                </b-row>
+            </div>
+        </section>
+    </b-col>
+
+    {# agregar proveedor #}
+    <b-modal ref="modalAddProveedor" scrollable title="Nuevo Proveedor" @hidden="setProveedor([])">
+        <form-proveedor
+            ref="form-proveedor"
+            :proveedor="proveedor"
+            @close-modal="closeModal('modalAddProveedor')"
+        ></form-proveedor>
+        <template v-slot:modal-footer="{ ok, cancel, hide }">
+            <b-button variant="outline-success" :disabled="formWait" @click="nuevoProveedor">Guardar</b-button>
+        </template>
+    </b-modal>
+
+    {# editar licecncia #}
+    <b-modal ref="modalEditarLicencia" scrollable title="Editar Licencia" @hidden="setLicencia([])">
+        <form-licencia
+            ref="form-licencia-editar"
+            :licencia="licencia"
+            :proveedores="proveedores"
+            :tipo-pagos="tipoPagos"
+            :usuarios="usuarios"
+            :is-modal="true"
+            @close-modal="closeModal"
+        ></form-licencia>
+        <template v-slot:modal-footer="{ ok, cancel, hide }">
+            <b-button variant="outline-success" :disabled="formWait" @click="editarLicencia">Guardar</b-button>
+        </template>
+    </b-modal>
+
+    {# ver archivos #}
+    <b-modal ref="modalVerArchivos" scrollable title="Ver Archivos" :hide-footer="true" @hidden="setLicencia([])">
+        <b-table hover bordered :fields="[{key: 'nombre_archivo', label: 'Archivo'}]" :items="licencia.multimedia">
+            <template v-slot:cell(nombre_archivo)="data">
+                <a :href="data.item.url" target="_blank">${ data.item.nombre_archivo }</a>
+            </template>
+        </b-table>
+    </b-modal>
+
+    {# asociar proyecto #}
+    <b-modal ref="modalAsociarProyecto" title="Asociar Proyectos">
+        <validation-observer
+            tag="form"
+            class="form-horizontal form-bordered"
+            v-slot="{ invalid, valid }"
+            ref="formAsociarProyecto"
+        >
+            <!-- proveedor -->
+            <validation-provider
+                tag="div"
+                class="form-group row"
+                v-slot="{ errors, classes }"
+                rules="required"
+                name="Proyectos"
+            >
+                <label class="col-sm-4 control-label text-sm-right pt-2">
+                    Proyectos <span class="required">*</span>
+                </label>
+                <b-col sm="8">
+                    <div class="input-group">
+                        <v-select
+                            multiple
+                            placeholder="Selecciona..."
+                            v-model="proyectosRelacionar"
+                            label="nombre"
+                            :options="proyectos"
+                            :clearable="false"
+                            :reduce="option => option.id"
+                            :select-on-tab="true"
+                        >
+                            <template slot="no-options">No se han encontrado opciones.</template>
+                        </v-select>
+                        <div class="invalid-feedback">${ errors[0] }</div>
+                    </div>
+                </b-col>
+            </validation-provider>
+        </validation-observer>
+        <template v-slot:modal-footer="{ ok, cancel, hide }">
+            <b-button variant="outline-success" :disabled="formWait" @click="asociarProyectoLicencia">Guardar</b-button>
+        </template>
+    </b-modal>
+</b-row>
+
+{{ _view.start('script') }}
+    {# { Html.script('/webpack/dev/licencias.bundle.js')|raw } #}
+    {{ Html.script('licencias.bundle.354c31d2c860571d9c54')|raw }}
+{{ _view.end() }}

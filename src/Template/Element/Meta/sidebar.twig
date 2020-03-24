@@ -1,0 +1,92 @@
+<aside id="sidebar-left" class="sidebar-left">
+    <div class="sidebar-header">
+        <div class="sidebar-title text-uppercase">Navegación</div>
+        <div
+            class="sidebar-toggle d-none d-md-block"
+            data-toggle-class="sidebar-left-collapsed"
+            data-target="html"
+            data-fire-event="sidebar-left-toggle"
+        >
+            <i class="fas fa-bars" aria-label="Toggle sidebar"></i>
+        </div>
+    </div>
+
+    <div class="nano">
+        <div class="nano-content">
+            <nav id="menu" class="nav-main" role="navigation">
+                <ul class="nav nav-main">
+                    <li>
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home" aria-hidden="true"></i>
+                            <span>Inicio</span>
+                        </a>
+                    </li>
+
+                    {% if usuario.perfil.id in [1, 2] %}
+                        <li>
+                            <a class="nav-link" href="{{ Url.build({'controller': 'proyectos', 'action': 'add'})|raw }}">
+                                <i class="fas fa-edit" aria-hidden="true"></i>
+                                <span>Proyectos</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% if usuario.perfil.id in [1, 2] %}
+                        <li class="nav-parent">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-calculator" aria-hidden="true"></i>
+                                <span>Finanzas</span>
+                            </a>
+                            <ul class="nav nav-children">
+                                <li>
+                                    <a href="{{ Url.build({'controller': 'facturaciones', 'action': 'add'})|raw }}">Facturación</a>
+                                </li>
+                                <li><a href="{{ Url.build({'controller': 'gastos', 'action': 'add'})|raw }}">Gastos</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="{{ Url.build({'controller': 'clientes', 'action': 'add'})|raw }}">
+                                <i class="fas fa-users" aria-hidden="true"></i>
+                                <span>Clientes</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="{{ Url.build({'controller': 'proveedores', 'action': 'add'})|raw }}">
+                                <i class="far fa-handshake" aria-hidden="true"></i>
+                                <span>Proveedores</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% if usuario.perfil_id == 1 %}
+                        <li>
+                            <a class="nav-link" href="{{ Url.build({'controller': 'licencias', 'action': 'add'})|raw }}">
+                                <i class="fas fa-certificate" aria-hidden="true"></i>
+                                <span>Licencias</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    <li class="nav-parent">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-user-circle" aria-hidden="true"></i>
+                            <span>Usuarios</span>
+                        </a>
+                        <ul class="nav nav-children">
+                            {% if usuario.perfil_id == 1 %}
+                                <li>
+                                    <a href="{{ Url.build({'controller': 'usuarios', 'action': 'add'})|raw }}">Nuevo Usuario</a>
+                                </li>
+                            {% endif %}
+                            <li>
+                                <a href="{{ Url.build({'controller': 'usuarios', 'action': 'timesheet'})|raw }}">
+                                    Horas Trabajadas
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</aside>

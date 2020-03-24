@@ -1,0 +1,49 @@
+<b-row id="app" v-cloak>
+    <b-col sm="12">
+        <section class="card">
+            <header class="card-header">
+                <div class="card-actions">
+                    <a href="#" class="card-action card-action-toggle" data-card-toggle></a>
+                </div>
+                <h2 class="card-title">Nuevo Proveedor</h2>
+            </header>
+            <div class="card-body">
+                <form-proveedor ref="form-proveedor" :proveedor="proveedor"></form-proveedor>
+            </div>
+            <footer class="card-footer text-right">
+                <b-button variant="outline-success" @click="nuevoProveedor" :disabled="invalid || formWait">
+                    Guardar
+                </b-button>
+                <b-button variant="outline-danger" @click="clearForm">Cancelar</b-button>
+            </footer>
+        </section>
+    </b-col>
+
+    <b-col sm="12">
+        <section class="card">
+            <header class="card-header">
+                <div class="card-actions">
+                    <a href="#" class="card-action card-action-toggle" data-card-toggle></a>
+                </div>
+                <h2 class="card-title">Listado de Proveedores</h2>
+            </header>
+            <div class="card-body">
+                <b-row>
+                    <listado-proveedor :proveedores="proveedores" @eliminar="eliminar" @editar="showModal"></listado-proveedor>
+                </b-row>
+            </div>
+        </section>
+    </b-col>
+
+    <b-modal ref="modalEditarProveedor" scrollable title="Editar Proveedor" @hidden="setProveedor([])">
+        <form-proveedor ref="form-proveedor-editar" :proveedor="proveedor" @close-modal="closeModal"></form-proveedor>
+        <template v-slot:modal-footer="{ ok, cancel, hide }">
+            <b-button variant="outline-success" :disabled="formWait" @click="editarProveedor">Guardar</b-button>
+        </template>
+    </b-modal>
+</b-row>
+
+{{ _view.start('script') }}
+    {# { Html.script('/webpack/dev/proveedores.bundle.js')|raw } #}
+    {{ Html.script('proveedores.bundle.60256f085512b84a8209')|raw }}
+{{ _view.end() }}

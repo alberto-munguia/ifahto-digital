@@ -1,0 +1,717 @@
+<b-row id="app" v-cloak>
+    <validation-observer tag="form" v-slot="{ invalid, handleSubmit }" ref="form-proyecto">
+        <section class="card">
+            <header class="card-header">
+                <h2 class="card-title">Generales</h2>
+            </header>
+            <div class="card-body">
+                <b-row class="form-group">
+                    <!-- proyecto -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Nombre del Proyecto"
+                        >
+                            <label class="col-form-label">Nombre del proyecto <span class="required">*</span></label>
+                            <b-form-input v-model="proyecto.nombre" :class="classes"></b-form-input>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- número proyecto ifahto -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Número del Proyecto de Ifahto"
+                        >
+                            <label class="col-form-label">Número del proyecto de ifahto <span class="required">*</span></label>
+                            <b-form-input v-model="proyecto.clave_ifahto" :class="classes"></b-form-input>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- tipo de servicio -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Tipo de Servicio"
+                        >
+                            <label class="col-form-label">Tipo de servicio <span class="required">*</span></label>
+                            <v-select
+                                placeholder="Selecciona..."
+                                v-model="proyecto.tipo_servicio_id"
+                                label="nombre"
+                                :options="tipoServicios"
+                                :clearable="false"
+                                :reduce="option => option.id"
+                                :select-on-tab="true"
+                            >
+                                <template slot="no-options">No se han encontrado opciones.</template>
+                            </v-select>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- persona autorización -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Persona que Autoriza"
+                        >
+                            <label class="col-form-label">Persona que autoriza <span class="required">*</span></label>
+                            <b-form-input v-model="proyecto.cliente_autorizacion" :class="classes"></b-form-input>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- fecha autorización -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Fecha de Autorización"
+                        >
+                            <label class="col-form-label">Fecha de autorización <span class="required">*</span></label>
+                            <b-form-datepicker
+                                close-button
+                                today-button
+                                local="es"
+                                placeholder="Selecciona la fecha"
+                                class="mb-2"
+                                close-button-variant="outline-dark"
+                                v-model="proyecto.fecha_autorizacion"
+                                v-bind="locale"
+                                :required="true"
+                                :state="classes['is-valid']"
+                                :class="classes"
+                            ></b-form-datepicker>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- fecha entrega -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider tag="div" class="form-group" v-slot="{errors, classes}" name="Fecha de Entrega">
+                            <label class="col-form-label">Fecha de entrega</label>
+                            <b-form-datepicker
+                                close-button
+                                today-button
+                                local="es"
+                                placeholder="Selecciona la fecha"
+                                class="mb-2"
+                                close-button-variant="outline-dark"
+                                v-model="proyecto.fecha_entrega"
+                                v-bind="locale"
+                                :state="classes['is-valid']"
+                                :class="classes"
+                                :min="minDate"
+                            ></b-form-datepicker>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- hora entrega -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider tag="div" class="form-group" v-slot="{errors, classes}" name="Hora de Entrega">
+                            <label class="col-form-label">Hora de entrega</label>
+                            <b-form-timepicker
+                                now-button
+                                show-seconds
+                                now-button-variant="outline-danger"
+                                close-button-variant="outline-dark"
+                                v-model="proyecto.hora_entrega"
+                                placeholder="Selecciona la hora"
+                                :class="classes" locale="es"
+                                v-bind="locale"
+                            ></b-form-timepicker>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- fecha finalización -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            name="Fecha de Finalización"
+                        >
+                            <label class="col-form-label">Fecha de finalización</label>
+                            <b-form-datepicker
+                                today-button
+                                close-button
+                                local="es"
+                                placeholder="Selecciona la fecha"
+                                class="mb-2"
+                                close-button-variant="outline-dark"
+                                v-model="proyecto.fecha_finalizacion"
+                                v-bind="locale"
+                                :state="classes['is-valid']"
+                                :class="classes"
+                                :min="minDate"
+                            ></b-form-datepicker>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- hora finalización -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider tag="div" class="form-group" v-slot="{errors, classes}" name="Hora de Finalización">
+                            <label class="col-form-label">Hora de finalización</label>
+                            <b-form-timepicker
+                                now-button
+                                show-seconds
+                                now-button-variant="outline-danger"
+                                close-button-variant="outline-dark"
+                                v-model="proyecto.hora_finalizacion"
+                                placeholder="Selecciona la hora"
+                                :class="classes" locale="es"
+                                v-bind="locale"
+                            ></b-form-timepicker>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- estado -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Estado"
+                        >
+                            <label class="col-form-label">Estado <span class="required">*</span></label>
+                            <v-select
+                                placeholder="Selecciona..."
+                                v-model="proyecto.entidad_federativa_id"
+                                label="nombre"
+                                :options="entidades"
+                                :clearable="false"
+                                :reduce="option => option.id"
+                                :select-on-tab="true"
+                                @input="getCiudadesByEntidad"
+                            >
+                                <template slot="no-options">No se han encontrado opciones.</template>
+                            </v-select>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- ciudad -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Ciudad"
+                        >
+                            <label class="col-form-label">Ciudad <span class="required">*</span></label>
+                            <v-select
+                                placeholder="Selecciona..."
+                                v-model="proyecto.ciudad_id"
+                                label="nombre"
+                                :options="ciudades"
+                                :clearable="false"
+                                :reduce="option => option.id"
+                                :select-on-tab="true"
+                            >
+                                <template slot="no-options">No se han encontrado opciones.</template>
+                            </v-select>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- responsable -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Responsable"
+                        >
+                            <label class="col-form-label">Responsable <span class="required">*</span></label>
+                            <v-select
+                                placeholder="Selecciona..."
+                                v-model="proyecto.responsable_id"
+                                label="nombre_completo"
+                                :options="getUsuariosPM('Account Manager')"
+                                :clearable="false"
+                                :reduce="option => option.id"
+                                :select-on-tab="true"
+                            >
+                                <template slot="no-options">No se han encontrado opciones.</template>
+                            </v-select>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- descripción -->
+                    <b-col md="12" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Descripción del Proyecto"
+                        >
+                            <label class="col-form-label">Descripción del proyecto <span class="required">*</span></label>
+                            <b-form-textarea v-model="proyecto.descripcion" :class="classes" rows="4"></b-form-textarea>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+                </b-row>
+            </div>
+        </section>
+
+        <section class="card">
+            <header class="card-header">
+                <h2 class="card-title">Datos del Cliente</h2>
+                <div class="card-actions">
+                    <b-button
+                        v-b-tooltip.hover
+                        title="Agregar Contacto"
+                        size="sm"
+                        variant="outline-dark"
+                        @click="showModal('modalAddContacto')"
+                    >
+                        <i class="fas fa-plus"></i>
+                    </b-button>
+                </div>
+            </header>
+            <div class="card-body">
+                <b-row class="form-group">
+                    <!-- cliente -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Cliente"
+                        >
+                            <label class="col-form-label">Cliente <span class="required">*</span></label>
+                            <div class="input-group">
+                                <v-select
+                                    placeholder="Selecciona..."
+                                    v-model="proyecto.cliente_id"
+                                    label="razon_social"
+                                    :options="clientes"
+                                    :clearable="false"
+                                    :reduce="option => option.id"
+                                    :select-on-tab="true"
+                                    @input="getMarcasByCliente"
+                                >
+                                    <template slot="no-options">No se han encontrado opciones.</template>
+                                </v-select>
+                                <b-input-group-append>
+                                    <b-button
+                                        variant="outline-danger"
+                                        v-b-tooltip.hover
+                                        title="Nuevo Cliente"
+                                        @click="showModal('modalAddCliente')"
+                                    >
+                                        <i class="fas fa-plus"></i>
+                                    </b-button>
+                                </b-input-group-append>
+                            </div>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- marca -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider tag="div" class="form-group" v-slot="{errors, classes}" rules="required" name="Marca">
+                            <label class="col-form-label">Marca <span class="required">*</span></label>
+                            <div class="input-group">
+                                <v-select
+                                    placeholder="Selecciona..."
+                                    v-model="proyecto.marca_id"
+                                    label="nombre"
+                                    :options="marcas"
+                                    :clearable="false"
+                                    :reduce="option => option.id"
+                                    :select-on-tab="true"
+                                >
+                                    <template slot="no-options">No se han encontrado opciones.</template>
+                                </v-select>
+                                <b-input-group-append>
+                                    <b-button
+                                        variant="outline-danger"
+                                        v-b-tooltip.hover
+                                        title="Nueva Marca"
+                                        @click="showModal('modalAddMarca')"
+                                    >
+                                        <i class="fas fa-plus"></i>
+                                    </b-button>
+                                </b-input-group-append>
+                            </div>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- tipo de cliente -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Tipo de Cliente"
+                        >
+                            <label class="col-form-label">Tipo de cliente <span class="required">*</span></label>
+                            <v-select
+                                placeholder="Selecciona..."
+                                v-model="proyecto.tipo_cliente_id"
+                                label="nombre"
+                                :options="tipoClientes"
+                                :clearable="false"
+                                :reduce="option => option.id"
+                                :select-on-tab="true"
+                            >
+                                <template slot="no-options">No se han encontrado opciones.</template>
+                            </v-select>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- contacto responsable -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Contacto Responsable"
+                        >
+                            <label class="col-form-label">Contacto responsable <span class="required">*</span></label>
+                            <v-select
+                                placeholder="Selecciona..."
+                                v-model="proyecto.contacto_responsable_id"
+                                label="nombre_completo"
+                                :options="contactos"
+                                :clearable="false"
+                                :reduce="option => option.id"
+                                :select-on-tab="true"
+                                @input="getContactoResponsable"
+                            >
+                                <template slot="no-options">No se han encontrado opciones.</template>
+                            </v-select>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- contacto facturacion -->
+                    <b-col md="4" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Contacto Facturación"
+                        >
+                            <label class="col-form-label">Contacto facturacion <span class="required">*</span></label>
+                            <v-select
+                                placeholder="Selecciona..."
+                                v-model="proyecto.contacto_facturacion_id"
+                                label="nombre_completo"
+                                :options="contactos"
+                                :clearable="false"
+                                :reduce="option => option.id"
+                                :select-on-tab="true"
+                                @input="getContactoFacturacion"
+                            >
+                                <template slot="no-options">No se han encontrado opciones.</template>
+                            </v-select>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+                </b-row>
+
+                <b-row v-if="Object.keys(responsable).length > 0 || Object.keys(facturacion).length > 0">
+                    <template v-if="Object.keys(responsable).length > 0">
+                        <b-col md="6">
+                            <h5 class="text-center text-dark h5">Responsable</h5><br />
+                            <b-table hover bordered responsive :items="[responsable]" :fields="fieldsContacto">
+                            </b-table>
+                        </b-col>
+                    </template>
+
+                    <template v-if="Object.keys(facturacion).length > 0">
+                        <b-col md="6">
+                            <h5 class="text-center text-dark h5">Facturación</h5><br />
+                            <b-table hover bordered responsive :items="[facturacion]" :fields="fieldsContacto">
+                        </b-col>
+                    </template>
+                </b-row>
+            </div>
+        </section>
+
+        <section class="card">
+            <header class="card-header">
+                <h2 class="card-title">Costos</h2>
+            </header>
+            <div class="card-body">
+                <b-row class="form-group justify-content-center align-items-center">
+                    <!-- monto proyecto -->
+                    <b-col md="3" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            :rules="{ required:true, regex:/^([0-9]{1}[0-9]{0,2})$|^([1-9]{1}[0-9]{0,2})(\d{3})*(\.\d{2})?$|^(\d)?(\.)(\d{2})?$/ }"
+                            name="Monto Total del Proyecto"
+                        >
+                            <label class="col-form-label">Monto total del proyecto <span class="required">*</span></label>
+                            <div class="input-group">
+                                <b-input-group-prepend is-text><b>$</b></b-input-group-prepend>
+                                <b-form-input type="number" v-model="proyecto.monto" :class="classes"></b-form-input>
+                                <div class="invalid-feedback">${ errors[0] }</div>
+                            </div>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- periodicidad de pagos -->
+                    <b-col md="3" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Periodicidad de Pago"
+                        >
+                            <label class="col-form-label">Periodicidad de pago <span class="required">*</span></label>
+                            <v-select
+                                placeholder="Selecciona..."
+                                v-model="proyecto.periodicidad_pago_id"
+                                label="nombre"
+                                :options="periodicidadPagos"
+                                :clearable="false"
+                                :reduce="option => option.id"
+                                :select-on-tab="true"
+                            >
+                                <template slot="no-options">No se han encontrado opciones.</template>
+                            </v-select>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- número de pagos -->
+                    <b-col md="3" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required|numeric"
+                            name="Número de Pagos"
+                        >
+                            <label class="col-form-label">Número de pagos <span class="required">*</span></label>
+                            <b-form-input type="number" v-model="proyecto.numero_pago" :class="classes"></b-form-input>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- requiere anticipo -->
+                    <b-col md="3" class="">
+                        <validation-provider tag="div" class="form-group" v-slot="{ classes }" name="Requiere Anticipo">
+                            <b-form-checkbox
+                                id="checkbox"
+                                v-model="proyecto.requiere_anticipo"
+                                name="requiere_anticipo"
+                                value="1"
+                                unchecked-value="0"
+                            >
+                                Requiere anticipo
+                            </b-form-checkbox>
+                        </validation-provider>
+                    </b-col>
+                </b-row>
+
+                <b-row class="form-group" v-if="proyecto.requiere_anticipo == 1">
+                    <!-- porcentaje de anticipo -->
+                    <b-col md="3" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required|numeric"
+                            name="Porcentaje de Anticpo"
+                        >
+                            <label class="col-form-label">Porcentaje de anticipo <span class="required">*</span></label>
+                            <b-form-input type="number" v-model="proyecto.porcentaje_anticipo" :class="classes"></b-form-input>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- anticipo -->
+                    <b-col md="3" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            :rules="{ required:true, regex:/^([0-9]{1}[0-9]{0,2})$|^([1-9]{1}[0-9]{0,2})(\d{3})*(\.\d{2})?$|^(\d)?(\.)(\d{2})?$/ }"
+                            name="Anticipo"
+                        >
+                            <label class="col-form-label">Anticipo <span class="required">*</span></label>
+                            <div class="input-group">
+                                <b-input-group-prepend is-text><b>$</b></b-input-group-prepend>
+                                <b-form-input type="number" v-model="proyecto.anticipo" :class="classes"></b-form-input>
+                                <div class="invalid-feedback">${ errors[0] }</div>
+                            </div>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+                </b-row>
+            </div>
+        </section>
+
+        <section class="card">
+            <header class="card-header">
+                <h2 class="card-title">Usuarios Asignados</h2>
+            </header>
+            <div class="card-body">
+                <b-row class="form-group justify-content-center align-items-end">
+                    <!-- usuario -->
+                    <b-col md="6" class="mb-3">
+                        <validation-provider tag="div" class="form-group" v-slot="{errors, classes}" name="Usuario">
+                            <label class="col-form-label">Usuario</label>
+                            <v-select
+                                placeholder="Selecciona..."
+                                v-model="usuario"
+                                label="nombre_completo"
+                                :options="usuarios"
+                                :clearable="false"
+                                :select-on-tab="true"
+                            >
+                                <template slot="no-options">No se han encontrado opciones.</template>
+                            </v-select>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <!-- hora cotizada -->
+                    <b-col md="3" class="mb-3">
+                        <validation-provider
+                            tag="div"
+                            class="form-group"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Horas Cotizadas"
+                        >
+                            <label class="col-form-label">Horas cotizadas</label>
+                            <b-form-input type="number" step=".5" v-model="horaCotizada" :class="classes"></b-form-input>
+                            <div class="invalid-feedback">${ errors[0] }</div>
+                        </validation-provider>
+                    </b-col>
+
+                    <b-col md="1" class="mb-3 text-center">
+                        <b-button
+                            v-b-tooltip.hover
+                            title="Agregar Usuario"
+                            variant="outline-dark"
+                            :disabled="disableUserBtn"
+                            @click="agregarHoras"
+                        >
+                            <i class="fas fa-plus"></i>
+                        </b-button>
+                    </b-col>
+                </b-row>
+
+                <b-row v-if="Object.keys(items).length > 0">
+                    <b-col>
+                        <b-table striped hover bordered responsive :items="items" :fields="fields">
+                            <template v-slot:cell(acciones)="row">
+                                <b-button
+                                    v-b-tooltip.hover
+                                    variant="outline-danger"
+                                    title="Eliminar"
+                                    @click="items.splice(row.index, 1)"
+                                >
+                                    <i class="far fa-trash-alt"></i>
+                                </b-button>
+                            </template>
+                        </b-table>
+                    </b-col>
+                </b-row>
+            </div>
+        </section>
+
+        <section class="card">
+            <header class="card-header">
+                <h2 class="card-title">Archivos</h2>
+            </header>
+            <div class="card-body">
+                <vue-dropzone
+                    ref="facturacionFiles"
+                    id="dropzone"
+                    :options="dropzoneOptions"
+                    :use-custom-slot="true"
+                    @vdropzone-sending="onSendingDropzone"
+                    @vdropzone-success="onSuccessDropzone"
+                >
+                    <div class="dropzone-custom-content">
+                        <h4 class="dropzone-custom-title">Arrastra los archivos aquí para subirlos</h4>
+                        <div class="subtitle">...o da clic para seleccionarlos</div>
+                    </div>
+                </vue-dropzone>
+            </div>
+            <footer class="card-footer text-right">
+                <b-button variant="outline-success" @click="nuevoProyecto" :disabled="invalid || formWait">
+                    Guardar
+                </b-button>
+                <b-button variant="outline-danger" @click="clearForm">Cancelar</b-button>
+            </footer>
+        </section>
+    </validation-observer>
+
+    {# modal cliente #}
+    <b-modal ref="modalAddCliente" scrollable title="Nuevo Cliente" @hidden="setCliente([])">
+        <form-cliente ref="form-cliente" :cliente="cliente" @close-modal="closeModal('modalAddCliente')"></form-cliente>
+        <template v-slot:modal-footer="{ ok, cancel, hide }">
+            <b-button variant="outline-success" :disabled="formWait" @click="nuevoCliente">Guardar</b-button>
+        </template>
+    </b-modal>
+
+    {# modal marca #}
+    <b-modal ref="modalAddMarca" scrollable title="Nueva Marca" @hidden="setMarca([])">
+        <form-marca
+            ref="form-marca"
+            :marca="marca"
+            :clientes="clientes"
+            @close-modal="closeModal('modalAddMarca')"
+        ></form-marca>
+        <template v-slot:modal-footer="{ ok, cancel, hide }">
+            <b-button variant="outline-success" :disabled="formWait" @click="nuevaMarca">Guardar</b-button>
+        </template>
+    </b-modal>
+
+    {# modal contacto #}
+    <b-modal ref="modalAddContacto" scrollable title="Nuevo Contacto" @hidden="setContacto([])">
+        <form-contacto ref="form-contacto" :contacto="contacto" @close-modal="closeModal('modalAddContacto')"></form-contacto>
+        <template v-slot:modal-footer="{ ok, cancel, hide }">
+            <b-button variant="outline-success" :disabled="formWait" @click="nuevoContacto">Guardar</b-button>
+        </template>
+    </b-modal>
+</b-row>
+
+{{ _view.start('script') }}
+    {# { Html.script('/webpack/dev/proyectos_add.bundle.js')|raw } #}
+    {{ Html.script('proyectos_add.bundle.a542974fa462fd72f5f4')|raw }}
+{{ _view.end() }}

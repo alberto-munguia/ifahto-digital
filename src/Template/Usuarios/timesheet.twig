@@ -1,0 +1,167 @@
+<b-row id="app" v-cloak>
+    <b-col sm="12">
+        <section class="card">
+            <header class="card-header">
+                {# <div class="card-actions">
+                    <a href="#" class="card-action card-action-toggle" data-card-toggle></a>
+                </div> #}
+                <h2 class="card-title">Horas Trabajadas</h2>
+            </header>
+            <validation-observer v-slot="{ invalid, handleSubmit }" ref="formTimesheet">
+                <div class="card-body">
+                    <b-alert variant="info" :show="disableTimesheet" dismissible fade>No hay más fechas para llenar.</b-alert>
+                    <b-form class="form-horizontal form-bordered">
+                        {# fecha actual #}
+                        <div class="form-group row">
+                            <label class="col-sm-4 control-label text-sm-right mt-2 mb-1">Fecha</label>
+                            <b-col sm="8">
+                                <p class="form-control-static mt-2 mb-1 font-weight-bold text-capitalize">${ startDate }</p>
+                            </b-col>
+                        </div>
+
+                        {# total #}
+                        <div class="form-group row">
+                            <label class="col-sm-4 control-label text-sm-right mt-2 mb-1">Total de horas</label>
+                            <b-col sm="8">
+                                <p class="form-control-static mt-2 mb-1 font-weight-bold">${ totalHoras }</p>
+                            </b-col>
+                        </div>
+
+                        {# proyecto #}
+                        <validation-provider
+                            tag="div"
+                            class="form-group row"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Proyecto"
+                        >
+                            <label class="col-sm-4 control-label text-sm-right pt-2">
+                                Proyecto <span class="required">*</span>
+                            </label>
+                            <b-col sm="8">
+                                <v-select
+                                    placeholder="Selecciona..."
+                                    v-model="proyecto"
+                                    label="nombre"
+                                    :options="proyectos"
+                                    :clearable="false"
+                                    :reset-on-options-change="true"
+                                    :select-on-tab="true"
+                                    @input="fetchProyecto"
+                                >
+                                    <template slot="no-options">No se han encontrado opciones.</template>
+                                </v-select>
+                                <div class="invalid-feedback">${ errors[0] }</div>
+                            </b-col>
+                        </validation-provider>
+
+                        {# cliente #}
+                        <div class="form-group row" v-if="Object.keys(cliente).length > 0">
+                            <label class="col-sm-4 control-label text-sm-right mt-2 mb-1">Cliente</label>
+                            <b-col sm="8">
+                                <p class="form-control-static mt-2 mb-1">${ cliente.nombre }</p>
+                            </b-col>
+                        </div>
+
+                        {# opcines agencia #}
+                        <validation-provider
+                            tag="div"
+                            class="form-group row"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Tipo"
+                            v-if="showExtraOptions"
+                        >
+                            <label class="col-sm-4 control-label text-sm-right mt-2 mb-1">
+                                Tipo <span class="required">*</span>
+                            </label>
+                            <b-col sm="8">
+                                <v-select
+                                    placeholder="Selecciona..."
+                                    v-model="tipo"
+                                    :options="extraOptions"
+                                    :clearable="false"
+                                    :select-on-tab="true"
+                                >
+                                    <template slot="no-options">No se han encontrado opciones.</template>
+                                </v-select>
+                                <div class="invalid-feedback">${ errors[0] }</div>
+                            </b-col>
+                        </validation-provider>
+
+                        {# horas #}
+                        <validation-provider
+                            tag="div"
+                            class="form-group row"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Horas Registradas"
+                        >
+                            <label class="col-sm-4 control-label text-sm-right pt-2">
+                                Horas registradas <span class="required">*</span>
+                            </label>
+                            <b-col sm="8">
+                                <b-form-input
+                                    type="number"
+                                    step=".5"
+                                    v-model="total"
+                                    :class="classes"
+                                ></b-form-input>
+                                <div class="invalid-feedback">${ errors[0] }</div>
+                            </b-col>
+                        </validation-provider>
+                    </b-form>
+                </div>
+                <footer class="card-footer text-right">
+                    <b-button variant="outline-info" @click="agregarHoras" :disabled="invalid || disableTimesheet">
+                        Acumular Horas
+                    </b-button>
+                    <b-button variant="outline-danger" @click="clearForm">Cancelar</b-button>
+                </footer>
+            </validation-observer>
+        </section>
+    </b-col>
+
+    <b-col sm="12">
+        <section class="card">
+            <header class="card-header">
+                <h2 class="card-title">Lista de Horas Trabajadas</h2>
+            </header>
+            <template v-if="showTable">
+                <div class="card-body">
+                    <b-table
+                        hover
+                        striped
+                        bordered
+                        responsive
+                        :sticky-header="true"
+                        :items="items"
+                        :fields="fields"
+                    >
+                        <template v-slot:cell(acciones)="row">
+                            <b-button
+                                v-b-tooltip.hover
+                                variant="outline-danger"
+                                title="Eliminar"
+                                @click="eliminarHora(row.index)"
+                            >
+                                <i class="far fa-trash-alt"></i>
+                            </b-button>
+                        </template>
+                    </b-table>
+                </div>
+                <footer class="card-footer text-right">
+                    <b-button variant="outline-success" @click="guardarHoras" :disabled="disableTimesheet">
+                        Guardar Horas
+                    </b-button>
+                </footer>
+            </template>
+            <b-alert variant="info" :show="!showTable">No hay información</b-alert>
+        </section>
+    </b-col>
+</b-row>
+
+{{ _view.start('script') }}
+    {# { Html.script('/webpack/dev/usuarios_timesheet.bundle.js')|raw } #}
+    {{ Html.script('usuarios_timesheet.bundle.f1bbb9a3396cd911cdb5')|raw }}
+{{ _view.end() }}

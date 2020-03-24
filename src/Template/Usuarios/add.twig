@@ -1,0 +1,260 @@
+<b-row id="app" v-cloak>
+    <b-col sm="12">
+        <section class="card">
+            <header class="card-header">
+                <div class="card-actions">
+                    <a href="#" class="card-action card-action-toggle" data-card-toggle></a>
+                </div>
+                <h2 class="card-title">Nuevo Usuario</h2>
+            </header>
+            <validation-observer v-slot="{ invalid, valid, handleSubmit }" ref="form-usuario">
+                <div class="card-body">
+                    <b-form class="form-horizontal form-bordered" @submit.prevent="handleSubmit(nuevoUsuario)">
+                        {# nombre #}
+                        <validation-provider
+                            tag="div"
+                            class="form-group row"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Nombre"
+                        >
+                            <label class="col-sm-4 control-label text-sm-right pt-2">
+                                Nombre <span class="required">*</span>
+                            </label>
+                            <b-col sm="8">
+                                <b-form-input v-model="usuario.nombre" :class="classes"></b-form-input>
+                                <div class="invalid-feedback">${ errors[0] }</div>
+                            </b-col>
+                        </validation-provider>
+
+                        {# apellido paterno #}
+                        <validation-provider
+                            tag="div"
+                            class="form-group row"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Apellido Paterno"
+                        >
+                            <label class="col-sm-4 control-label text-sm-right pt-2">
+                                Apellido paterno <span class="required">*</span>
+                            </label>
+                            <b-col sm="8">
+                                <b-form-input v-model="usuario.apellido_paterno" :class="classes"></b-form-input>
+                                <div class="invalid-feedback">${ errors[0] }</div>
+                            </b-col>
+                        </validation-provider>
+
+                        {# apellido materno #}
+                        <validation-provider tag="div" class="form-group row" v-slot="{ classes }" name="Apellido Materno">
+                            <label class="col-sm-4 control-label text-sm-right pt-2">Apellido materno</label>
+                            <b-col sm="8">
+                                <b-form-input v-model="usuario.apellido_materno" :class="classes"></b-form-input>
+                            </b-col>
+                        </validation-provider>
+
+                        {# puesto #}
+                        <validation-provider
+                            tag="div"
+                            class="form-group row"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Puesto"
+                        >
+                            <label class="col-sm-4 control-label text-sm-right pt-2">
+                                Puesto <span class="required">*</span>
+                            </label>
+                            <b-col sm="8">
+                                <v-select
+                                    placeholder="Selecciona..."
+                                    v-model="usuario.puesto_id"
+                                    label="nombre"
+                                    :options="puestos"
+                                    :clearable="false"
+                                    :reduce="option => option.id"
+                                    :select-on-tab="true"
+                                >
+                                    <template slot="no-options">No se han encontrado opciones.</template>
+                                </v-select>
+                                <div class="invalid-feedback">${ errors[0] }</div>
+                            </b-col>
+                        </validation-provider>
+
+                        {# email #}
+                        <validation-provider
+                            tag="div"
+                            class="form-group row"
+                            v-slot="{ errors, classes }"
+                            rules="required|email"
+                            name="Correo Electrónico"
+                        >
+                            <label class="col-sm-4 control-label text-sm-right pt-2">
+                                Correo electrónico <span class="required">*</span>
+                            </label>
+                            <b-col sm="8">
+                                <b-form-input type="email" v-model="usuario.email" :class="classes"></b-form-input>
+                                <div class="invalid-feedback">${ errors[0] }</div>
+                            </b-col>
+                        </validation-provider>
+
+                        {# costo mes #}
+                        <validation-provider
+                            tag="div"
+                            class="form-group row"
+                            v-slot="{ errors, classes }"
+                            :rules="{ regex:/^([0-9]{1}[0-9]{0,2})$|^([1-9]{1}[0-9]{0,2})(\d{3})*(\.\d{2})?$|^(\d)?(\.)(\d{2})?$/ }"
+                            name="Costo Hora"
+                        >
+                            <label class="col-sm-4 control-label text-sm-right pt-2"> Costo hora</label>
+                            <b-col sm="8">
+                                <div class="input-group">
+                                    <b-input-group-prepend is-text><b>$</b></b-input-group-prepend>
+                                    <b-form-input type="number" v-model="usuario.costo_hora" :class="classes"></b-form-input>
+                                    <div class="invalid-feedback">${ errors[0] }</div>
+                                </div>
+                            </b-col>
+                        </validation-provider>
+
+                        {# fecha timesheet #}
+                        <validation-provider
+                            tag="div"
+                            class="form-group row"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Fecha de Inicio Horas Trabajadas"
+                        >
+                            <label class="col-sm-4 control-label text-sm-right pt-2">
+                                Fecha de inicio horas trabajadas <span class="required">*</span>
+                            </label>
+                            <b-col sm="8">
+                                <b-form-datepicker
+                                    close-button
+                                    today-button
+                                    local="es"
+                                    placeholder="Selecciona la fecha"
+                                    class="mb-2"
+                                    close-button-variant="outline-dark"
+                                    v-model="usuario.fecha_timesheet"
+                                    v-bind="locale"
+                                    :required="true"
+                                    :state="classes['is-valid']"
+                                    :class="classes"
+                                ></b-form-datepicker>
+                                <div class="invalid-feedback">${ errors[0] }</div>
+                                <p class="help-text">Fecha en el cual iniciarán sus horas trabajadas</p>
+                            </b-col>
+                        </validation-provider>
+
+                        {# perfil #}
+                        <validation-provider
+                            tag="div"
+                            class="form-group row"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Perfil"
+                        >
+                            <label class="col-sm-4 control-label text-sm-right pt-2">
+                                Perfil <span class="required">*</span>
+                            </label>
+                            <b-col sm="8">
+                                <v-select
+                                    placeholder="Selecciona..."
+                                    v-model="usuario.perfil_id"
+                                    label="nombre"
+                                    :options="perfiles"
+                                    :clearable="false"
+                                    :reduce="option => option.id"
+                                    :select-on-tab="true"
+                                >
+                                    <template slot="no-options">No se han encontrado opciones.</template>
+                                </v-select>
+                                <div class="invalid-feedback">${ errors[0] }</div>
+                            </b-col>
+                        </validation-provider>
+
+                        {# password #}
+                        <validation-provider
+                            tag="div"
+                            class="form-group row"
+                            v-slot="{ errors, classes }"
+                            rules="required"
+                            name="Contraseña"
+                            vid="password"
+                        >
+                            <label class="col-sm-4 control-label text-sm-right pt-2">
+                                Contraseña <span class="required">*</span>
+                            </label>
+                            <b-col sm="8">
+                                <b-form-input type="password" v-model="usuario.password" :class="classes"></b-form-input>
+                                <div class="invalid-feedback">${ errors[0] }</div>
+                            </b-col>
+                        </validation-provider>
+
+                        {# re-password #}
+                        <validation-provider
+                            tag="div"
+                            class="form-group row"
+                            v-slot="{ errors, classes }"
+                            rules="required|confirmed:password"
+                            name="Repetir Contraseña"
+                        >
+                            <label class="col-sm-4 control-label text-sm-right pt-2">
+                                Repetir contraseña <span class="required">*</span>
+                            </label>
+                            <b-col sm="8">
+                                <b-form-input type="password" v-model="usuario.re_password" :class="classes"></b-form-input>
+                                <div class="invalid-feedback">${ errors[0] }</div>
+                            </b-col>
+                        </validation-provider>
+                    </b-form>
+                </div>
+                <footer class="card-footer text-right">
+                    <b-button variant="outline-success" @click="nuevoUsuario" :disabled="invalid || formWait">
+                        Guardar
+                    </b-button>
+                    <b-button variant="outline-danger" @click="clearForm">Cancelar</b-button>
+                </footer>
+            </validation-observer>
+        </section>
+    </b-col>
+
+    <b-col sm="12">
+        <section class="card">
+            <header class="card-header">
+                <div class="card-actions">
+                    <a href="#" class="card-action card-action-toggle" data-card-toggle></a>
+                </div>
+                <h2 class="card-title">Listado de Usuarios</h2>
+            </header>
+            <div class="card-body">
+                <b-row>
+                    <listado-usuario
+                        :usuarios="usuarios"
+                        :puestos="puestos"
+                        :perfiles="perfiles"
+                        @eliminar="eliminar"
+                        @editar="showModal"
+                        @asignar-costo="showModal"
+                    ></listado-usuario>
+                </b-row>
+            </div>
+        </section>
+    </b-col>
+
+    <b-modal ref="modalEditarUsuario" scrollable title="Editar Usuario" @hidden="setUsuario([])">
+        <form-usuario-editar
+            ref="form-usuario-editar"
+            :usuario="usuario"
+            :puestos="puestos"
+            :perfiles="perfiles"
+            @close-modal="closeModal('modalEditarUsuario')"
+        ></form-usuario-editar>
+        <template v-slot:modal-footer="{ ok, cancel, hide }">
+            <b-button variant="outline-success" :disabled="formWait" @click="editarUsuario">Guardar</b-button>
+        </template>
+    </b-modal>
+</b-row>
+
+{{ _view.start('script') }}
+    {# { Html.script('/webpack/dev/usuarios_add.bundle.js')|raw } #}
+    {{ Html.script('usuarios_add.bundle.032f8721b27b06ce27c8')|raw }}
+{{ _view.end() }}

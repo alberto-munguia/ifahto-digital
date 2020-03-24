@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html class="fixed">
+<head>
+    {{ Html.charset()|raw }}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>
+        {{ _view.fetch('title')|raw }}
+    </title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800|Shadows+Into+Light" rel="stylesheet" type="text/css">
+    {{ Html.css('bootstrap.min')|raw }}
+    {{ Html.css('animate')|raw }}
+    {{ Html.css('/vendor/font-awesome/css/all.min')|raw }}
+    {{ Html.css('theme')|raw }}
+    {{ Html.css('default')|raw }}
+    {{ Html.css('custom.min')|raw }}
+
+    {{ _view.fetch('meta')|raw }}
+    {{ _view.fetch('css')|raw }}
+
+    {{ Html.script('modernizr')|raw }}
+</head>
+<body>
+    <section class="body-sign">
+        {{ _view.fetch('content')|raw }}
+    </section>
+
+    {{ Html.script('jquery.min')|raw }}
+    {{ Html.script('commons.bundle.f471fb8306a30b1ed79d')|raw }}
+    {{ Html.script('main.bundle.9e8b8cb4589b5b7f2364')|raw }}
+    {{ _view.fetch('script')|raw }}
+</body>
+</html>

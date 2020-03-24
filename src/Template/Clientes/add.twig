@@ -1,0 +1,49 @@
+<b-row id="app" v-cloak>
+    <b-col sm="12">
+        <section class="card">
+            <header class="card-header">
+                <div class="card-actions">
+                    <a href="#" class="card-action card-action-toggle" data-card-toggle></a>
+                </div>
+                <h2 class="card-title">Nuevo Cliente</h2>
+            </header>
+            <div class="card-body">
+                <form-cliente ref="form-cliente" :cliente="cliente"></form-cliente>
+            </div>
+            <footer class="card-footer text-right">
+                <b-button variant="outline-success" @click="nuevoCliente" :disabled="invalid || formWait">
+                    Guardar
+                </b-button>
+                <b-button variant="outline-danger" @click="clearForm">Cancelar</b-button>
+            </footer>
+        </section>
+    </b-col>
+
+    <b-col sm="12">
+        <section class="card">
+            <header class="card-header">
+                <div class="card-actions">
+                    <a href="#" class="card-action card-action-toggle" data-card-toggle></a>
+                </div>
+                <h2 class="card-title">Listado de Clientes</h2>
+            </header>
+            <div class="card-body">
+                <b-row>
+                    <listado-cliente :clientes="clientes" @eliminar="eliminar" @editar="showModal"></listado-cliente>
+                </b-row>
+            </div>
+        </section>
+    </b-col>
+
+    <b-modal ref="modalEditarCliente" scrollable title="Editar Cliente" @hidden="setCliente([])">
+        <form-cliente ref="form-cliente-editar" :cliente="cliente" @close-modal="closeModal"></form-cliente>
+        <template v-slot:modal-footer="{ ok, cancel, hide }">
+            <b-button variant="outline-success" :disabled="formWait" @click="editarCliente">Guardar</b-button>
+        </template>
+    </b-modal>
+</b-row>
+
+{{ _view.start('script') }}
+    {#{ Html.script('/webpack/dev/clientes.bundle.js')|raw }#}
+    {{ Html.script('clientes.bundle.8bf71b23860f31c71cbb')|raw }}
+{{ _view.end() }}

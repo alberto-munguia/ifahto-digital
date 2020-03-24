@@ -1,0 +1,11 @@
+import './plugins/vee-validate'
+import './plugins/vue-axios'
+import './plugins/vue-bootstrap'
+import './plugins/vue-select'
+import './plugins/vue-bootstrap-table'
+import './plugins/vue-moment'
+import './plugins/vue-fancygrid'
+import './plugins/vue-sweetalert'
+import './plugins/vue-datepicker'
+
+// import '../../css/custom.min.css'

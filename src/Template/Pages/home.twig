@@ -1,0 +1,81 @@
+<div id="app" v-cloak>
+    {# <b-row>
+        <b-col>
+            <b-row class="mb-3">
+                <b-col xl="3">
+                    <section class="card card-featured-left card-featured-primary mb-3">
+                        <div class="card-body">
+                            <div class="widget-summary">
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title text-uppercase">Proyectos en el mes</h4>
+                                        <div class="info">
+                                            <strong class="amount">1281</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </b-col>
+                <b-col xl="6"></b-col>
+            </b-row>
+        </b-col>
+    </b-row> #}
+
+    <b-row>
+        <b-col sm="12">
+            <section class="card">
+                <header class="card-header">
+                    <div class="card-actions">
+                        <a href="#" class="card-action card-action-toggle" data-card-toggle></a>
+                    </div>
+                    <h2 class="card-title">Listado de Proyectos</h2>
+                </header>
+                <div class="card-body">
+                    <b-row>
+                        <listado-proyecto :proyectos="proyectos" @cambiar-estatus="showModalEstatus"></listado-proyecto>
+                    </b-row>
+                </div>
+            </section>
+        </b-col>
+    </b-row>
+
+    <b-modal ref="modalEditarEstatus" title="Cambiar Estatus">
+        <validation-observer v-slot="{ invalid, valid }" ref="form-estatus" tag="form" class="form-horizontal form-bordered">
+            {# estatus #}
+            <validation-provider
+                tag="div"
+                class="form-group row"
+                v-slot="{ errors, classes }"
+                rules="required"
+                name="Estatus"
+            >
+                <label class="col-sm-4 control-label text-sm-right pt-2">
+                    Estatus <span class="required">*</span>
+                </label>
+                <b-col sm="8">
+                    <v-select
+                        placeholder="Selecciona..."
+                        v-model="proyecto.estatus"
+                        label="nombre"
+                        :options="estatus"
+                        :clearable="false"
+                        :select-on-tab="true"
+                    >
+                        <template slot="no-options">No se han encontrado opciones.</template>
+                    </v-select>
+                    <div class="invalid-feedback">${ errors[0] }</div>
+                </b-col>
+            </validation-provider>
+        </validation-observer>
+        <template v-slot:modal-footer="{ ok, cancel, hide }">
+            <b-button variant="outline-success" :disabled="formWait" @click="cambiarEstatus(proyecto)">Guardar</b-button>
+        </template>
+    </b-modal>
+</div>
+
+{{ _view.start('script') }}
+    {# { Html.script('/webpack/dev/dashboard.bundle.js')|raw } #}
+    {{ Html.script('dashboard.bundle.9f01fed0714e9890ed94')|raw }}
+{{ _view.end() }}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html class="fixed sidebar-left-collapsed sidebar-left-sm">
+<head>
+    {{ Html.charset()|raw }}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>
+        {% if _view.fetch('title') == 'Pages' %} Inicio {% else %} {{ _view.fetch('title')|raw }} {% endif %} | Ifahto Digital
+    </title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800|Shadows+Into+Light" rel="stylesheet" type="text/css">
+    {{ Html.css('bootstrap.min')|raw }}
+    {{ Html.css('animate')|raw }}
+    {{ Html.css('/vendor/font-awesome/css/all.min')|raw }}
+    {{ Html.css('theme')|raw }}
+    {{ Html.css('default')|raw }}
+    {{ Html.css('custom.min')|raw }}
+
+    {{ _view.fetch('meta')|raw }}
+    {{ _view.fetch('css')|raw }}
+
+    {{ Html.script('modernizr')|raw }}
+</head>
+<body>
+    <section class="body">
+        {% element 'Meta/header' %}
+
+        <div class="inner-wrapper">
+            {% element 'Meta/sidebar' %}
+
+            <section role="main" class="content-body card-margin">
+                <header class="page-header">
+                    {# <h2>Basic Forms</h2> #}
+                    <div class="right-wrapper text-right">
+                        <ol class="breadcrumbs">
+                            <li>
+                                <a href="/" title="Ir al Inicio">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+                            {# <li><span>Forms</span></li> #}
+                            {# <li><span>Basic</span></li> #}
+                        </ol>
+                        <a class="sidebar-right-toggle" data-open=""></a>
+                    </div>
+                </header>
+
+                {{ _view.fetch('content')|raw }}
+            </section>
+        </div>
+    </section>
+
+    {{ Html.script('jquery.min')|raw }}
+    {{ Html.script('jquery.browser.mobile')|raw }}
+    {{ Html.script('popper.min')|raw }}
+    {{ Html.script('bootstrap.min')|raw }}
+    {{ Html.script('theme')|raw }}
+    {{ Html.script('commons.bundle.f471fb8306a30b1ed79d')|raw }}
+    {{ Html.script('main.bundle.9e8b8cb4589b5b7f2364')|raw }}
+    {{ _view.fetch('script')|raw }}
+</body>
+</html>
